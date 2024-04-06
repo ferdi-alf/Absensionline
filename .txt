@@ -1,0 +1,67 @@
+// guru
+Route::group(['guest' => 'auth:guru'], function () {
+    Route::get('/loginguru', [SesiguruController::class, 'loginguru'])->name('loginguru');
+    Route::post('/loginguru', [SesiguruController::class, 'logguru']);
+});
+
+
+Route::get('/gur',function(){
+    return redirect('/guru');
+});
+
+Route::middleware(['auth' => 'auth:guru'])->group(function(){
+    //Routes untuk masuk ke halaman guru
+    Route::get('/guru',[SesiguruController::class, 'guru'])->name('guru');
+     Route::get('/logout',[SesiguruController::class, 'logout']);
+});
+//end guru
+
+
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use App\Models\Employee;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+
+class SesiguruController extends Controller
+{
+
+    // sesi login guru
+    public function loginguru(){
+        return view('loginguru');
+    }
+
+    function logguru(Request $request){
+
+        $request->validate([
+            'username'=>'required',
+            'tingkat'=>'required',
+            'jurusan'=>'required',
+            'password'=>'required',
+        ],
+        [
+            'username.required'=>'username wajib di isi',
+            'tingkat.required'=>'tingkat wajib dipilih',
+            'jurusan.required'=>'jurusan wajib dipiliih',
+            'password.required'=>'password wajib di isi',
+        ]);
+
+        $request = [
+            'username' => $request->username,
+            'tingkat' => $request->tingkat,
+            'jurusan' => $request->jurusan,
+            'password' => $request->password,
+        ];
+        
+        
+        if (Auth::guard('guru')->attempt($request)) {
+            return view('/guru');
+        }else{
+            return redirect ('/loginguru')->withErrors('Email dan Password Salah goblok')->withInput();
+        }
+    }
+}
