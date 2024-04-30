@@ -374,7 +374,7 @@
                     window.location = "/delete/admin/" + id + " "
                     Swal.fire({
                         title: "Deleted!",
-                        text: "dia terkick wakk😂😂😂",
+                        text: "Berhasil di Hapus",
                         icon: "success"
                     });
                 } else {

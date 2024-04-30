@@ -37,6 +37,7 @@
 
     <div class="container-fluid main">
         <div class="container-fluid nt">
+
             <div class="box animate__backInUp animate__delay-2s">
                 <p class="fs-2">Absensi Tanggal <span id="tanggal"></span></p>
                 <p class="fst-italic">dibuat dengan ❤️ oleh @eternalferr_</p>
@@ -50,11 +51,23 @@
             {{-- alert --}}
             @if ($message = Session::get('sukses'))
                 <div class="container-alert">
-                    <div class="card-alert">
+                    <div class="card-alert ">
                         <i class="fa-solid fa-check"></i>
                         <h4>{{ $message }}</h4>
                         <p>semoga kamu jujur dalam mengabsen temanmu 😁👌</p>
-                        <button id="buttonn">OK</button>
+                        <button id="buttonn">OKEHH</button>
+                    </div>
+                </div>
+            @endif
+            @if ($errors->any())
+                <div class="container-alert">
+                    <div class="alert alert-danger  flex  flex-col justify-content-center align-items-center">
+                        <ul>
+                            @foreach ($errors->all() as $item)
+                                <li>{{ $item }}</li>
+                            @endforeach
+                        </ul>
+                        <button class="btn btn-primary" id="buttonn">Siapp</button>
                     </div>
                 </div>
             @endif
@@ -158,8 +171,9 @@
                     <img src="{{ asset('assets/img10pg.jpg') }}" class="img-thumbnail" alt="...">
                     <div class="input">
                         <p class="fs-6">Tulis angka saja:</p>
+                        <p class="fs-6">Jika hadir semua tulis "0" saja!!</p>
                         <input type="text" name="jumlah_tidak_hadir" id="jumlah_tidak_hadir"
-                            placeholder="Jumlah temanmu yang tidak masuk" required>
+                            placeholder="Jumlah temanmu yang tidak masuk">
                     </div>
                 </div>
 
@@ -171,8 +185,9 @@
                             1. Ali (a) <br>
                             2. Budi (s) <br>
                             3. .....dst :</p>
+                        <p class="fs-6">Jika hadir semua isi "Nihil"</p>
                         <input type="text" name="siswa_tidak_hadir" id="siswa_tidak_hadir"
-                            placeholder="Tulis nama temanmu yang tidak masuk seperti contoh" required>
+                            placeholder="Tulis nama temanmu yang tidak masuk seperti contoh">
                     </div>
                 </div>
                 <button type="submit" name="submit" class="submit">Kirim</button>
@@ -213,6 +228,7 @@
             loop: true
         });
     </script>
+
 </body>
 
 </html>

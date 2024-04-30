@@ -485,7 +485,7 @@
                     window.location = "/delete/" + id + " "
                     Swal.fire({
                         title: "Deleted!",
-                        text: "dia terkick wakk😂😂😂",
+                        text: "Berhasil di hapus",
                         icon: "success"
                     });
                 } else {
