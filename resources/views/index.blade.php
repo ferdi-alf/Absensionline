@@ -62,18 +62,48 @@
             </div>
             {{-- alert --}}
             @if ($message = Session::get('sukses'))
-                <div class="container-alert">
-                    <div class="card-alert ">
-                        <i class="fa-solid fa-check"></i>
-                        <h4>{{ $message }}</h4>
-                        <p>semoga kamu jujur dalam mengabsen temanmu 😁👌</p>
-                        <button id="buttonn">OKEHH</button>
-                    </div>
-                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sukses',
+                            text: '{{ $message }}',
+                            showConfirmButton: true,
+                            confirmButtonText: 'OK',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Tutup SweetAlert
+                                Swal.close();
+                            }
+                        });
+                    });
+                </script>
             @endif
+
+            @if ($message = Session::get('error'))
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Yahh Gagal nih :(',
+                            text: '{{ $message }}',
+                            showConfirmButton: true,
+                            confirmButtonText: 'OK',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Tutup SweetAlert
+                                Swal.close();
+                            }
+                        });
+                    });
+                </script>
+            @endif
+
+
             @if ($errors->any())
                 <div class="container-alert">
                     <div class="alert alert-danger  flex  flex-col justify-content-center align-items-center">
+                        <h3 class="text-center">Gagal:(</h3>
                         <ul>
                             @foreach ($errors->all() as $item)
                                 <li>{{ $item }}</li>
@@ -84,7 +114,7 @@
                 </div>
             @endif
             {{-- end alert --}}
-            <form action="/insertabsen" method="POST" enctype="multipart/form-data">
+            <form action="/insertabsen" method="POST" class="frm" enctype="multipart/form-data"id="myForm">
                 @csrf
                 <div class="box">
                     <p class="fs-2">Ketua Kelas</p>
@@ -202,8 +232,10 @@
                             placeholder="Tulis nama temanmu yang tidak masuk seperti contoh">
                     </div>
                 </div>
-                <button type="submit" name="submit" class="submit">Kirim</button>
             </form>
+            <div style="width: 100%">
+                <button type="submit" name="submit" id="myButton" class="submit">Kirim</button>
+            </div>
         </div>
     </div>
 
@@ -230,6 +262,9 @@
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <!-- Animate Aos -->
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    {{-- Sweet Alert --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         AOS.init();
     </script>
@@ -240,6 +275,28 @@
             typeSpeed: 60,
             backSpeed: 60,
             loop: true
+        });
+    </script>
+
+    <script>
+        $('.submit').click(function(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Peringatan!!",
+                text: "harap periksa lagi absen sebelum mengirim ya gess😁",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Kirim absen",
+                cancelButtonText: "periksa lagi"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Menggunakan metode POST untuk mengirim data
+                    $('form').submit(); // Kirim formulir menggunakan metode POST
+                }
+            });
         });
     </script>
 
