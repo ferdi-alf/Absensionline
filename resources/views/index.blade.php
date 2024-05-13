@@ -31,6 +31,16 @@
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 </head>
+<style>
+    .ig {
+        color: rgb(0, 132, 255);
+        text-decoration: none;
+    }
+
+    .ig:hover {
+        text-decoration: underline;
+    }
+</style>
 
 <body>
 
@@ -40,7 +50,9 @@
 
             <div class="box animate__backInUp animate__delay-2s">
                 <p class="fs-2">Absensi Tanggal <span id="tanggal"></span></p>
-                <p class="fst-italic">dibuat dengan ❤️ oleh @eternalferr_</p>
+                <p class="fst-italic">dibuat dengan ❤️ oleh <a
+                        href="https://www.instagram.com/eternalferr_?igsh=MXNmcXI1cGE2dWJkYw==" class="ig"
+                        style="font-size: 17px">@eternalferr_</a></p>
                 <img src="{{ asset('assets/img1.jpg') }}" class="img-thumbnail" alt="...">
                 <div class="log">
                     <a href="/login" class="btn btn-primary"> Login Admin</a>
@@ -197,7 +209,9 @@
 
     <div class="container-xxl">
         <div class="container-fluid foot">
-            <p class="fs-5">Dibuat dengan ❤️ oleh <span class="auto-type"></span></p>
+            <p class="fs-5">Dibuat dengan ❤️ oleh <a
+                    href="https://www.instagram.com/eternalferr_?igsh=MXNmcXI1cGE2dWJkYw==" class="auto-type ig"></a>
+            </p>
             <p style="font-weight: 100;">&copy; Copyright by SMKN 4 Palembang, 2024 | All Right
                 Reverse</p>
         </div>

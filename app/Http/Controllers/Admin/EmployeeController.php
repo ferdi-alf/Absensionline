@@ -303,11 +303,9 @@ class EmployeeController extends Controller
     {
         $absenhari = Absensi::all();
         view()->share('absenhari', $absenhari);
-
         $pdf =  FacadePdf::loadview('dataAbsensi-pdf')->setPaper('A3', 'landscape');
         $dateToday = Carbon::now()->format('d-m-Y');
         $namafilepdf = 'data-absensi(' . $dateToday . ').pdf';
-
         return $pdf->download($namafilepdf);
     }
 

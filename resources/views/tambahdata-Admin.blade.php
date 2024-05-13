@@ -39,18 +39,30 @@
             color: white !important;
         }
 
+        .containerG {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80%;
+            flex-direction: column;
+        }
+
         @media screen and (max-width:488px) {
             .col-8 {
+                width: 90%;
+            }
+
+            .containerG {
                 width: 90%;
             }
         }
     </style>
 
-    <div class="content-wrapper">
+    <div class="content-wrapper" style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
         <!-- Content Header (Page header) -->
-        <div class="content-header">
+        <div class="content-header" style="width: 80%;">
             <div class="container-fluid">
-                <div class="row-rt mb-2">
+                <div class="row-rt mb-2" style="display: flex; justify-content: space-between; align-items: center; ">
                     <div class="col-sm-6">
                         <h1 class="m-0">Dashboard v2</h1>
                     </div><!-- /.col -->
@@ -64,35 +76,33 @@
             </div><!-- /.container-fluid -->
         </div>
 
-        <div class="container">
+        <div class="containerG">
             <h1 class="text-center mb-5">Tambah hak akses Admin</h1>
-            <div class="row-rt">
-                <div class="col-8">
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                    <div class="card">
-                        <div class="card-body">
-                            <form action="/insertdata/admin" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <div class="mb-3">
-                                    <label for="exampleInputEmail1" class="form-label">Username</label>
-                                    <input type="text" name="name" class="form-control" id="exampleInputEmail1"
-                                        value="{{ old('name') }}">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Password</label>
-                                    <input type="password" name="password" class="form-control">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </form>
-                        </div>
+            <div class="row-rt" style="width: 100%;">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                <div class="card" style="width: 100%;">
+                    <div class="card-body">
+                        <form action="/insertdata/admin" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="exampleInputEmail1" class="form-label">Username</label>
+                                <input type="text" name="name" class="form-control" id="exampleInputEmail1"
+                                    value="{{ old('name') }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" name="password" class="form-control">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
                     </div>
                 </div>
             </div>
