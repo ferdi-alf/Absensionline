@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Absensi;
 use Illuminate\Http\Request;
 use App\Models\AbsensiBulanan;
@@ -49,14 +50,28 @@ class AbsensiController extends Controller
         try {
 
 
-            $key = $request->tingkat . '_' . $request->jurusan;
+            $dataDuplikatAbsensi = Absensi::where('tingkat', $request->tingkat)
+                ->where('jurusan', $request->jurusan)
+                ->first();
 
-            if (Cache::has($key)) {
-                return back()->with('error', 'Sudah ada data Absen dari tingkat dan jurusan yang sama, hanya bisa mengabsen 24jam sekali ;)');
+            $dataDuplikatAbsensiMingguan = AbsensiMingguan::where('tingkat', $request->tingkat)
+                ->where('jurusan', $request->jurusan)
+                ->first();
+
+            $dataDuplikatAbsensiBulanan = AbsensiBulanan::where('tingkat', $request->tingkat)
+                ->where('jurusan', $request->jurusan)
+                ->first();
+            // If duplicate data is found in any of the tables
+            if ($dataDuplikatAbsensi || $dataDuplikatAbsensiMingguan || $dataDuplikatAbsensiBulanan) {
+                // Calculate wait time
+                $waktuTunggu = $this->hitungWaktuTunggu($dataDuplikatAbsensi, $dataDuplikatAbsensiMingguan, $dataDuplikatAbsensiBulanan);
+
+                // Format wait time
+                $formattedWaktuTunggu = $this->formatWaktuTunggu($waktuTunggu);
+
+                // Display real-time message
+                return redirect()->back()->with('error', "Absen tingkat {$request->tingkat} dan jurusan {$request->jurusan} sudah ada. Tolong tunggu {$formattedWaktuTunggu} lagi untuk mengirim data absen lagi ya gaiss😁👌");
             }
-
-            Cache::put($key, true, now()->addHours(24));
-
             // Simpan ke tabel absensi
             Absensi::create([
                 'ketua_kelas' => $request->ketua_kelas,
@@ -103,5 +118,40 @@ class AbsensiController extends Controller
             // Jika terjadi kesalahan, berikan pesan kesalahan atau lakukan tindakan lain sesuai kebutuhan
             return back()->with('error', 'Gagal menyimpan data absen. Silakan coba lagi.');
         }
+    }
+
+    private function hitungWaktuTunggu($dataDuplikatAbsensi, $dataDuplikatAbsensiMingguan, $dataDuplikatAbsensiBulanan)
+    {
+        $timestampTerbaru = null;
+
+        if ($dataDuplikatAbsensi) {
+            $timestampTerbaru = $dataDuplikatAbsensi->created_at;
+        }
+
+        if ($dataDuplikatAbsensiMingguan && (!$timestampTerbaru || $timestampTerbaru < $dataDuplikatAbsensiMingguan->created_at)) {
+            $timestampTerbaru = $dataDuplikatAbsensiMingguan->created_at;
+        }
+
+        if ($dataDuplikatAbsensiBulanan && (!$timestampTerbaru || $timestampTerbaru < $dataDuplikatAbsensiBulanan->created_at)) {
+            $timestampTerbaru = $dataDuplikatAbsensiBulanan->created_at;
+        }
+
+        if ($timestampTerbaru) {
+            $waktuTunggu = $timestampTerbaru->addDay()->diff(Carbon::now());
+            return $waktuTunggu;
+        }
+
+        return null;
+    }
+
+    private function formatWaktuTunggu($waktuTunggu)
+    {
+        $jam = $waktuTunggu->h;
+        $menit = $waktuTunggu->i;
+        $detik = $waktuTunggu->s;
+
+        $formattedWaktuTunggu = "{$jam} jam {$menit} menit {$detik} detik";
+
+        return $formattedWaktuTunggu;
     }
 }

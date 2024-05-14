@@ -40,6 +40,12 @@
     .ig:hover {
         text-decoration: underline;
     }
+
+    .inpt {
+        width: 100%;
+        height: 90px;
+        padding: 5px 0 0 7px;
+    }
 </style>
 
 <body>
@@ -228,8 +234,8 @@
                             2. Budi (s) <br>
                             3. .....dst :</p>
                         <p class="fs-6">Jika hadir semua isi "Nihil"</p>
-                        <input type="text" name="siswa_tidak_hadir" id="siswa_tidak_hadir"
-                            placeholder="Tulis nama temanmu yang tidak masuk seperti contoh">
+                        <textarea class="inpt" type="text" name="siswa_tidak_hadir" id="siswa_tidak_hadir"
+                            placeholder="Tulis nama temanmu yang tidak masuk seperti contoh"></textarea>
                     </div>
                 </div>
             </form>
