@@ -415,8 +415,6 @@ select:focus {
 }
 
 
-
-
 @media screen and (max-width:950px) {
     .container-fluid.hero .container {
         width: 100%;

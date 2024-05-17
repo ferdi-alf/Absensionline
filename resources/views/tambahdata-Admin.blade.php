@@ -97,6 +97,14 @@
                                 <input type="text" name="name" class="form-control" id="exampleInputEmail1"
                                     value="{{ old('name') }}">
                             </div>
+
+                            <div class="mb-3">
+                                <select class="form-select form-control" name="role" aria-label="Default select example">
+                                    <option value=""selected>Role</option>
+                                    <option value="admin">admin</option>
+                                    <option value="guru piket">guru piket</option>
+                                </select>
+                            </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" name="password" class="form-control">

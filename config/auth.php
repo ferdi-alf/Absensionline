@@ -40,11 +40,16 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-    
+
         'guru' => [
             'driver' => 'session',
             'provider' => 'employees',
         ],
+
+        'guru_piket' => [
+            'driver' => 'session',
+            'provider' => 'guru_piket'
+        ]
     ],
 
     /*
@@ -69,16 +74,16 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-    
+
         'employees' => [
             'driver' => 'eloquent',
             'model' => App\Models\Employee::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'guru_piket' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\guruPiket::class,
+        ]
     ],
 
     /*

@@ -74,7 +74,7 @@
                             @foreach ($absenhari as $index => $items)
                                 <tr>
                                     <th>{{ $index + $absenhari->firstItem() }}</th>
-                                    <th class="text-truncate">{{ $items->created_at->diffForHumans() }}</th>
+                                    <th class="text-truncate">{{ $items->created_at->format('H:i:s') }}</th>
                                     <th class="text-truncate">{{ $items->ketua_kelas }}</th>
                                     <th>{{ $items->no_tlp }}</th>
                                     <th class=" text-center text-truncate">{{ $items->wali_kelas }}</th>

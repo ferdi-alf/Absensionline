@@ -61,8 +61,8 @@
                         style="font-size: 17px">@eternalferr_</a></p>
                 <img src="{{ asset('assets/img1.jpg') }}" class="img-thumbnail" alt="...">
                 <div class="log">
-                    <a href="/login" class="btn btn-primary"> Login Admin</a>
-                    <a href="/loginguru" class="btn btn-success"> Login Guru</a>
+                    <a href="/login" class="btn btn-primary">login Admin</a>
+                    <a href="/loginguru" class="btn btn-success">LOgin Guru</a>
                 </div>
                 <p>Isilah data dengan benar</p>
             </div>

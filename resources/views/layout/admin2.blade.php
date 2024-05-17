@@ -149,55 +149,60 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-copy"></i>
-                                <p>
-                                    Hak Akses
-                                    <i class="fas fa-angle-left right"></i>
-                                    <span class="badge badge-info right">2</span>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/admin/akses/admin" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Data Akses Admin</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/admin/akses/guru" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Data Akses Guru</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        <!-- Menu Hak Akses -->
+                        @if (Auth::guard()->user()->role == 'admin')
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-copy"></i>
+                                    <p>
+                                        Hak Akses
+                                        <i class="fas fa-angle-left right"></i>
+                                        <span class="badge badge-info right">2</span>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="/admin/akses/admin" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Data Akses Admin</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/admin/akses/guru" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Data Akses Guru</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- Menu Forms -->
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-edit"></i>
+                                    <p>
+                                        Forms
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="/tambahdata/admin" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Tambah Admin</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/tambahdata" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Tambah Guru</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        @endif
 
 
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-edit"></i>
-                                <p>
-                                    Forms
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/tambahdata/admin" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Tambah Admin</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/tambahdata" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>tambah guru</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
                         <li class="nav-header">Absensi</li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">

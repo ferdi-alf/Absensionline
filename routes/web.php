@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\Guru\GuruController;
+use App\Http\Controllers\GuruPiketController;
 use App\Http\Controllers\Admin\SesiController;
 use App\Http\Controllers\Guru\SesiguruController;
 use App\Http\Controllers\Admin\EmployeeController;

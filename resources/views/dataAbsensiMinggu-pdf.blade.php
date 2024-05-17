@@ -59,7 +59,7 @@
         @foreach ($absenMingguan as $items)
             <tr>
                 <td>{{ $no++ }}</td>
-                <td class="text-truncate">{{ $items->created_at->diffForHumans() }}</td>
+                <td class="text-truncate">{{ $items->created_at->format('d-m-Y') }}</td>
                 <td class="text-truncate">{{ $items->ketua_kelas }}</td>
                 <td>{{ $items->no_tlp }}</td>
                 <td class=" text-center">{{ $items->wali_kelas }}</td>

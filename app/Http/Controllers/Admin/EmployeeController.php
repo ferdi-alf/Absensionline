@@ -46,12 +46,49 @@ class EmployeeController extends Controller
         $endOfMonth = now()->endOfMonth();
         $totalAbsenBulanIni = AbsensiBulanan::whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
 
+        $startOfMonth = now()->startOfMonth();
+        $endOfMonth = now()->endOfMonth();
+        $totalAbsenMingguIni = AbsensiMingguan::whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
+
         $totalHakAksesAdmin = User::count();
         $totalHakAksesGuru = Employee::count();
 
+        $time = Carbon::now();
+        $existingData = Absensi::whereDate('created_at', $time)
+            ->select('tingkat', 'jurusan')
+            ->get()
+            ->toArray();
+
+
+
+        $allCombinasi = [];
+        $tingkatList = ['X', 'XI', 'XII'];
+        $jurusanList = [
+            'DPIB 1', 'DPIB 2', 'TP 1', 'TP 2', 'TP 3', 'TKR 1', 'TKR 2', 'TKR 3', 'TKR Industri',
+            'TSM 1', 'TSM 2', 'TAV 1', 'TAV 2', 'TAV 3', 'TITL 1', 'TITL 2', 'TITL 3', 'TITL 4', 'TITL Industri',
+            'TKJ 1', 'TKJ 2', 'TKJ 3', 'TKJ ACP', 'RPL'
+        ];
+
+        foreach ($tingkatList as $tingkat) {
+            foreach ($jurusanList as $jurusan) {
+                $allCombinasi[] = ['tingkat' => $tingkat, 'jurusan' => $jurusan];
+            }
+        }
+
+        $missingData = array_filter($allCombinasi, function ($combinasi) use ($existingData) {
+            foreach ($existingData as $data) {
+                if ($data['tingkat'] === $combinasi['tingkat'] && $data['jurusan'] === $combinasi['jurusan']) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        $totalMissing = count($missingData);
+
         Artisan::call('refresh:data-bulanan');
         Artisan::call('refresh:data-harian');
-        return view('admin', compact('totalAbsenHariIni', 'totalAbsenBulanIni', 'totalHakAksesAdmin', 'totalHakAksesGuru'));
+        return view('admin', compact('totalAbsenHariIni', 'totalAbsenBulanIni', 'totalAbsenMingguIni', 'totalHakAksesAdmin', 'totalHakAksesGuru', 'missingData', 'totalMissing'));
     }
     public function absensiHari(Request $request)
     {
@@ -248,12 +285,14 @@ class EmployeeController extends Controller
     // request post menambah data admin
     public function insertdataAdmin(Request $request)
     {
-
         $request->validate([
             'name' => 'required',
+            'role' => 'required|in:admin,guru piket',
             'password' => ['required', 'min:8'],
         ], [
             'name.required' => 'Username wajib diisi',
+            'role.required' => 'role harus di pilih',
+            'role.in' => 'role hanya bisa berisi admin atau guru piket',
             'password.required' => 'Password wajib di isi',
             'password.min' => 'Password harus berisi setidaknya 8 karakter'
         ]);
