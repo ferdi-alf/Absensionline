@@ -238,6 +238,22 @@
                             placeholder="Tulis nama temanmu yang tidak masuk seperti contoh"></textarea>
                     </div>
                 </div>
+
+                <div class="box" data-aos="flip-left" data-aos-duration="1000">
+                    <p class="fs-2">Perhatian!!!</p>
+                    <div class="input"
+                        style="display: flex; flex-direction:column; justify-content:center; align-items:center;">
+                        <p class="fs-6 text-center">Jika terdapat error dalam mengirim absen, dan errornya terus
+                            berlanjut harap
+                            laporkan</p>
+                        <p class="fs-6 text-center">untuk melaporkan klik di bawah ini untuk ke whatsapp</p>
+                        <a href="whatsapp://send?abid=088286062042" class="text-center btn btn-primary">Klik disini
+                            untuk
+                            melaporkan</a>
+                        <p class="text-center">Harap jelaskan mengapa error dan kirimkan screenshot saat
+                            terjadi error</p>
+                    </div>
+                </div>
             </form>
             <div style="width: 100%">
                 <button type="submit" name="submit" id="myButton" class="submit">Kirim</button>

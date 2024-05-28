@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Kelas;
 use App\Models\Absensi;
 use Illuminate\Http\Request;
 use App\Models\AbsensiBulanan;
@@ -26,7 +27,7 @@ class AbsensiController extends Controller
             'no_tlp' => 'required|numeric|min:10',
             'wali_kelas' => 'required|min:5',
             'tingkat' => 'required|in:X,XI,XII',
-            'jurusan' => 'required|in:DPIB 1,DPIB 2,TP 1,TP 2,TP 3,TKR 1,TKR 2,TKR 3,TKR Industri,TSM 1,TSM 2,TSM 3,TSM Industri,TAV 1,TAV 2,TAV 3,TITL 1,TITL 2,TITL 3,TITL 4,TITL Industri,TKJ 1,TKJ 2,TKJ 3,TKJ 4,TKJ ACP,RPL',
+            'jurusan' => 'required|in:DPIB 1,DPIB 2,TP 1,TP 2,TP 3,TKR 1,TKR 2,TKR Industri,TSM 1,TSM 2,TAV 1,TAV 2,TITL 1,TITL 2,TITL 3,TITL 4,TITL Industri,TKJ 1,TKJ 2,TKJ 3,TKJ ACP,RPL',
             'ruang' => 'required|min:2',
             'jumlah_tidak_hadir' => 'required|numeric',
             'siswa_tidak_hadir' => 'required|min:5'
@@ -48,6 +49,7 @@ class AbsensiController extends Controller
             'siswa_tidak_hadir.min' => 'siswa tidak hadir terlalu pendek'
         ]);
 
+
         try {
             $dataDuplikatAbsensi = Absensi::where('tingkat', $request->tingkat)
                 ->where('jurusan', $request->jurusan)
@@ -60,6 +62,10 @@ class AbsensiController extends Controller
                 return redirect()->back()->with('error', "Absen tingkat {$request->tingkat} dan jurusan {$request->jurusan} sudah ada. Tolong tunggu {$formattedWaktuTunggu} lagi untuk mengirim data absen lagi ya gaiss😁👌");
             }
 
+            $kelas = Kelas::where('tingkat', $validasi['tingkat'])
+                ->where('jurusan', $validasi['jurusan'])
+                ->first();
+
             // Simpan ke tabel absensi
             $absensi = new Absensi();
             $absensi->ketua_kelas = $validasi['ketua_kelas'];
@@ -68,9 +74,11 @@ class AbsensiController extends Controller
             $absensi->tingkat = $validasi['tingkat'];
             $absensi->jurusan = $validasi['jurusan'];
             $absensi->ruang = $validasi['ruang'];
+            $absensi->kelas_id = $kelas->id;
             $absensi->jumlah_tidak_hadir = $validasi['jumlah_tidak_hadir'];
             $absensi->siswa_tidak_hadir = $validasi['siswa_tidak_hadir'];
             $absensi->save();
+
 
             $absensiMingguan = new AbsensiMingguan();
             $absensiMingguan->ketua_kelas = $validasi['ketua_kelas'];

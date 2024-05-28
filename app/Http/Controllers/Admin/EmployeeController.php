@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Kelas;
 use App\Models\Absensi;
 use App\Models\Employee;
 use Barryvdh\DomPDF\PDF;
@@ -12,6 +13,7 @@ use App\Exports\AbsensiExport;
 use App\Models\AbsensiBulanan;
 use App\Models\AbsensiMingguan;
 use App\Charts\AbsensiBulananChart;
+use App\Rules\uniqueTingkatJurusan;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -22,6 +24,7 @@ use App\Charts\AbsensiBulananXIIChart;
 use App\Exports\AbsensiMingguanExport;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf as FacadePdf;
 
 
@@ -59,37 +62,30 @@ class EmployeeController extends Controller
             ->get()
             ->toArray();
 
+        $allKelas = Kelas::all();
 
+        // Ambil semua kombinasi yang sudah mengisi absensi
+        $absensiKelas = Absensi::select('kelas_id')->distinct()->get()->pluck('kelas_id')->toArray();
 
-        $allCombinasi = [];
-        $tingkatList = ['X', 'XI', 'XII'];
-        $jurusanList = [
-            'DPIB 1', 'DPIB 2', 'TP 1', 'TP 2', 'TP 3', 'TKR 1', 'TKR 2', 'TKR 3', 'TKR Industri',
-            'TSM 1', 'TSM 2', 'TAV 1', 'TAV 2', 'TAV 3', 'TITL 1', 'TITL 2', 'TITL 3', 'TITL 4', 'TITL Industri',
-            'TKJ 1', 'TKJ 2', 'TKJ 3', 'TKJ ACP', 'RPL'
-        ];
-
-        foreach ($tingkatList as $tingkat) {
-            foreach ($jurusanList as $jurusan) {
-                $allCombinasi[] = ['tingkat' => $tingkat, 'jurusan' => $jurusan];
-            }
-        }
-
-        $missingData = array_filter($allCombinasi, function ($combinasi) use ($existingData) {
-            foreach ($existingData as $data) {
-                if ($data['tingkat'] === $combinasi['tingkat'] && $data['jurusan'] === $combinasi['jurusan']) {
-                    return false;
-                }
-            }
-            return true;
+        // Filter kombinasi yang belum mengisi absensi
+        $kelasBelumAbsen = $allKelas->filter(function ($kelas) use ($absensiKelas) {
+            return !in_array($kelas->id, $absensiKelas);
         });
-
-        $totalMissing = count($missingData);
+        $totalKelasBelumAbsen = $kelasBelumAbsen->count();
 
         Artisan::call('refresh:data-bulanan');
         Artisan::call('refresh:data-harian');
-        return view('admin', compact('totalAbsenHariIni', 'totalAbsenBulanIni', 'totalAbsenMingguIni', 'totalHakAksesAdmin', 'totalHakAksesGuru', 'missingData', 'totalMissing'));
+        return view('admin', compact(
+            'totalAbsenHariIni',
+            'totalAbsenBulanIni',
+            'totalAbsenMingguIni',
+            'totalHakAksesAdmin',
+            'totalHakAksesGuru',
+            'kelasBelumAbsen',
+            'totalKelasBelumAbsen'
+        ));
     }
+
     public function absensiHari(Request $request)
     {
         // Ambil data absensi untuk hari ini
@@ -414,4 +410,89 @@ class EmployeeController extends Controller
         return view('chart.dataChart-XII', $data);
     }
     // end sei diagram data
+
+    // crud kelas
+    public function kelass()
+    {
+        $data = Kelas::all();
+        return view('kelas', compact('data'));
+    }
+
+    public function postKelas(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'tingkat' => ['required', 'max:3', 'in:X,XI,XII'],
+            'jurusan' => ['required', 'array'],
+            'jurusan.*' => ['in:DPIB 1,DPIB 2,TP 1,TP 2,TP 3,TKR 1,TKR 2,TKR Industri,TSM 1,TSM 2,TAV 1,TAV 2,TITL 1,TITL 2,TITL 3,TITL 4,TITL Industri,TKJ 1,TKJ 2,TKJ 3,TKJ ACP,RPL'],
+        ], [
+            'tingkat.required' => 'Tingkat harus dipilih.',
+            'tingkat.max' => 'Tingkat melebihi batas.',
+            'jurusan.required' => 'Jurusan wajib dipilih.',
+            'jurusan.*.in' => 'Jurusan tidak valid.',
+        ]);
+
+        $validator->after(function ($validator) use ($request) {
+            foreach ($request->jurusan as $jurusan) {
+                $exists = Kelas::where('tingkat', $request->tingkat)->where('jurusan', $jurusan)->exists();
+                if ($exists) {
+                    $validator->errors()->add('jurusan', "Kombinasi tingkat {$request->tingkat} dan jurusan {$jurusan} sudah ada.");
+                }
+            }
+        });
+
+        $validator->validate();
+
+        foreach ($request->jurusan as $jurusan) {
+            // Update or create a new record in the 'kelas' table
+            Kelas::updateOrCreate(
+                ['tingkat' => $request->tingkat, 'jurusan' => $jurusan],
+                ['tingkat' => $request->tingkat, 'jurusan' => $jurusan]
+            );
+        }
+        return redirect()->back()->with('success', 'berhasil menambah data kelas');
+    }
+
+    public function deleteKelas($id)
+    {
+        $kelas = kelas::find($id);
+        $kelas->delete();
+
+        return redirect()->back()->with('success', 'berhasil menghapus kelas');
+    }
+
+    public function updateKelas($id)
+    {
+        $kelas = kelas::find($id);
+        return view('updateKelas', compact('kelas'));
+    }
+
+    public function postUpdateKelas(Request $request, $id)
+    {
+        $validasi = $request->validate([
+            'tingkat' => ['required', 'max:3', 'in:X,XI,XII'],
+            'jurusan' => [
+                'required', 'in:DPIB 1,DPIB 2,TP 1,TP 2,TP 3,TKR 1,TKR 2,TKR Industri,TSM 1,TSM 2,TAV 1,TAV 2,TITL 1,TITL 2,TITL 3,TITL 4,TITL Industri,TKJ 1,TKJ 2,TKJ 3,TKJ ACP,RPL',
+                new uniqueTingkatJurusan($request->tingkat, $request->jurusan)
+            ],
+        ], [
+            'tingkat.required' => 'tingkat tidak boleh kosong',
+            'tingkat.max' => 'field tingkat melebihi batas',
+            'jurusan.required' => 'jurusan tidak boleh kosong',
+            'jurusan.in' => 'format jurusan tidak valid'
+        ]);
+
+        $update = [];
+        if ($request->tingkat !== null) {
+            $update['tingkat'] = $validasi['tingkat'];
+        }
+
+        if ($request->jurusan !== null) {
+            $update['jurusan'] = $validasi['jurusan'];
+        }
+
+        Kelas::where('id', $request->id)->update($update);
+
+        return redirect()->route('tingkat.jurusan')->with('success', 'berhasil update data kelas');
+    }
+    // en crud kelas
 }

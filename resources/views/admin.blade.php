@@ -20,7 +20,6 @@
             background-color: white;
             padding: 7px;
             border-radius: 10px;
-            overflow-y: auto
         }
 
         @media (max-width:750px) {
@@ -133,7 +132,7 @@
 
                         <div class="info-box-content">
                             <span class="info-box-text">total kelas yang belum mengabsen</span>
-                            <span class="info-box-number">{{ $totalMissing }} kelas</span>
+                            <span class="info-box-number">{{ $totalKelasBelumAbsen }} kelas</span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
@@ -210,27 +209,29 @@
                     <div class="containerN">
                         <p style="color: black; text-align: center">Tingkat dan Jurusan yang Belum Mengisi Absensi Hari Ini
                         </p>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Tingkat</th>
-                                    <th>Jurusan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php
-                                    $no = 1;
-                                @endphp
-                                @foreach ($missingData as $data)
+                        <div class="conatiner" style="overflow-y: auto; height: 220px">
+                            <table class="table table-striped">
+                                <thead>
                                     <tr>
-                                        <th scope="row">{{ $no++ }}</th>
-                                        <td>{{ $data['tingkat'] }}</td>
-                                        <td>{{ $data['jurusan'] }}</td>
+                                        <th>#</th>
+                                        <th>Tingkat</th>
+                                        <th>Jurusan</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $no = 1;
+                                    @endphp
+                                    @foreach ($kelasBelumAbsen as $data)
+                                        <tr>
+                                            <th scope="row">{{ $no++ }}</th>
+                                            <td>{{ $data['tingkat'] }}</td>
+                                            <td>{{ $data['jurusan'] }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div><!--/. container-fluid -->

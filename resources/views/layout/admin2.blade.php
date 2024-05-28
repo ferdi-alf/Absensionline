@@ -198,6 +198,12 @@
                                             <p>Tambah Guru</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="/kelas" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Kelas</p>
+                                        </a>
+                                    </li>
                                 </ul>
                             </li>
                         @endif
@@ -379,6 +385,44 @@
             });
         });
     </script>
+
+    <script>
+        $('.deleteClass').click(function(event) {
+            // Hentikan tindakan default
+            event.preventDefault();
+
+            var id = $(this).attr('data-id');
+            var nama = $(this).attr('data-nama');
+
+            Swal.fire({
+                title: "Warning?",
+                text: "Yakin ingin menghapus kelas " + nama + " ",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Hanya lakukan penghapusan jika dikonfirmasi
+                    window.location = "/delete/kelas/" + id + " "
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Berhasil di hapus",
+                        icon: "success"
+                    });
+                } else {
+                    // Tidak ada tindakan jika tombol cancel ditekan
+                    Swal.fire({
+                        title: "Cancelled",
+                        text: "Penghapusan dibatalkan",
+                        icon: "info"
+                    });
+                }
+            });
+        });
+    </script>
+
     <script>
         $('.deleteGuru').click(function(event) {
             // Hentikan tindakan default
