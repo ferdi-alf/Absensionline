@@ -415,7 +415,8 @@ class EmployeeController extends Controller
     public function kelass()
     {
         $data = Kelas::all();
-        return view('kelas', compact('data'));
+        $groupByTingkat = $data->groupBy('tingkat');
+        return view('kelas', compact('data', 'groupByTingkat'));
     }
 
     public function postKelas(Request $request)
@@ -466,33 +467,45 @@ class EmployeeController extends Controller
         return view('updateKelas', compact('kelas'));
     }
 
-    public function postUpdateKelas(Request $request, $id)
+    public function postUpdateKelas(Request $request)
     {
         $validasi = $request->validate([
             'tingkat' => ['required', 'max:3', 'in:X,XI,XII'],
             'jurusan' => [
-                'required', 'in:DPIB 1,DPIB 2,TP 1,TP 2,TP 3,TKR 1,TKR 2,TKR Industri,TSM 1,TSM 2,TAV 1,TAV 2,TITL 1,TITL 2,TITL 3,TITL 4,TITL Industri,TKJ 1,TKJ 2,TKJ 3,TKJ ACP,RPL',
-                new uniqueTingkatJurusan($request->tingkat, $request->jurusan)
+                'required', 
+                'array', 
+                'min:1'
+            ],
+            'jurusan.*' => [
+                'in:DPIB 1,DPIB 2,TP 1,TP 2,TP 3,TKR 1,TKR 2,TKR Industri,TSM 1,TSM 2,TAV 1,TAV 2,TITL 1,TITL 2,TITL 3,TITL 4,TITL Industri,TKJ 1,TKJ 2,TKJ 3,TKJ ACP,RPL',
             ],
         ], [
-            'tingkat.required' => 'tingkat tidak boleh kosong',
-            'tingkat.max' => 'field tingkat melebihi batas',
-            'jurusan.required' => 'jurusan tidak boleh kosong',
-            'jurusan.in' => 'format jurusan tidak valid'
+            'tingkat.required' => 'Tingkat tidak boleh kosong',
+            'tingkat.max' => 'Field tingkat melebihi batas',
+            'jurusan.required' => 'Jurusan tidak boleh kosong',
+            'jurusan.array' => 'Jurusan harus berupa array',
+            'jurusan.min' => 'Setidaknya satu jurusan harus dipilih',
+            'jurusan.*.in' => 'Format jurusan tidak valid'
         ]);
-
-        $update = [];
-        if ($request->tingkat !== null) {
-            $update['tingkat'] = $validasi['tingkat'];
+    
+        $tingkat = $validasi['tingkat'];
+        $jurusanSelected = $request->input('jurusan', []);
+    
+        $kelas = Kelas::where('tingkat', $tingkat)->get();
+        foreach ($kelas as $kls) {
+            if (!in_array($kls->jurusan, $jurusanSelected)) {
+                $kls->delete();
+            }
         }
-
-        if ($request->jurusan !== null) {
-            $update['jurusan'] = $validasi['jurusan'];
+    
+        foreach ($jurusanSelected as $jurusan) {
+            Kelas::updateOrCreate(
+                ['tingkat' => $tingkat, 'jurusan' => $jurusan],
+                ['updated_at' => now()]
+            );
         }
-
-        Kelas::where('id', $request->id)->update($update);
-
-        return redirect()->route('tingkat.jurusan')->with('success', 'berhasil update data kelas');
+    
+        return redirect()->back()->with('success', 'Data kelas berhasil diperbarui');
     }
     // en crud kelas
 }

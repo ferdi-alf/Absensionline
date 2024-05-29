@@ -121,8 +121,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/kelas', [EmployeeController::class, 'kelass'])->name('tingkat.jurusan');
     Route::post('/post/kelas', [EmployeeController::class, 'postKelas'])->name('post.kelas');
     Route::get('/delete/kelas/{id}', [EmployeeController::class, 'deletekelas'])->name('delete.kelas');
-    Route::get('/kelas/{id}', [EmployeeController::class, 'updateKelas'])->name('update.kelas');
-    Route::post('/kelas/update/{id}', [EmployeeController::class, 'postUpdateKelas'])->name('post.update.kelas');
+    Route::post('/kelas/update/', [EmployeeController::class, 'postUpdateKelas'])->name('post.update.kelas');
 
     // end kelas
 });

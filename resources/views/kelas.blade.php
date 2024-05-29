@@ -31,9 +31,10 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
+
+                {{-- modal tambah kelas --}}
                 <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal"
                     data-bs-whatever="@mdo">Tambah +</button>
-
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
@@ -74,11 +75,67 @@
                                         <button type="submit" class="btn btn-primary">Submit</button>
                                     </div>
                                 </form>
-
                             </div>
                         </div>
                     </div>
                 </div>
+                {{-- modal edit tingkat X --}}
+                @foreach (['X', 'XI', 'XII'] as $tingkat)
+                    {{-- Modal Edit Tingkat {{ $tingkat }} --}}
+                    <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal{{ $tingkat }}" data-bs-whatever="@mdo">Tingkat
+                        {{ $tingkat }}</button>
+                    <div class="modal fade" id="exampleModal{{ $tingkat }}" tabindex="-1"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit tingkat {{ $tingkat }}
+                                    </h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="/kelas/update" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="mb-3">
+                                            <p class="fs-2">Tingkat</p>
+                                            <select class="form-select form-control" name="tingkat"
+                                                aria-label="Default select example" required>
+                                                @foreach (['X', 'XI', 'XII'] as $opt)
+                                                    <option value="{{ $opt }}"
+                                                        {{ $opt == $tingkat ? 'selected' : '' }}>{{ $opt }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <p class="fs-2">Jurusan</p>
+                                            <p>Pilih jurusan apa saja yang ingin diperbarui pada tingkat tertentu</p>
+                                            @foreach (['DPIB 1', 'DPIB 2', 'TP 1', 'TP 2', 'TP 3', 'TKR 1', 'TKR 2', 'TKR Industri', 'TSM 1', 'TSM 2', 'TAV 1', 'TAV 2', 'TITL 1', 'TITL 2', 'TITL 3', 'TITL 4', 'TITL Industri', 'TKJ 1', 'TKJ 2', 'TKJ 3', 'TKJ ACP', 'RPL'] as $jurusan)
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="jurusan[]"
+                                                        value="{{ $jurusan }}"
+                                                        id="jurusan_{{ $jurusan }}_{{ $tingkat }}"
+                                                        @if (isset($groupByTingkat[$tingkat]) && $groupByTingkat[$tingkat]->contains('jurusan', $jurusan)) checked @endif>
+                                                    <label class="form-check-label"
+                                                        for="jurusan_{{ $jurusan }}_{{ $tingkat }}">{{ $jurusan }}</label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+
+
 
                 <div class="row" style="overflow-y: auto">
                     <table class="table table-striped table-hover table-bordered tab"
@@ -103,7 +160,6 @@
                                     <td>{{ $kelas->jurusan }}</td>
                                     <td class="text-truncate">{{ $kelas->created_at->diffForHumans() }}</td>
                                     <td class="gap-2">
-                                        <a href="/kelas/{{ $kelas->id }}" class="btn btn-info mb-2 mb-md-0">Edit</a>
                                         <a href="/delete/kelas/{{ $kelas->id }}" class="btn btn-danger deleteClass"
                                             data-id="{{ $kelas->id }}"
                                             data-nama="{{ $kelas->tingkat }} {{ $kelas->jurusan }}">Hapus</a>
